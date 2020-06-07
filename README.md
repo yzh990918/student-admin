@@ -1,7 +1,7 @@
 <h2 style="width:100%;margin:0 auto;">学生综合管理系统</h2>
 
 <p style="text-align:center">
-<img width="100%" height="300px" src="https://image.yangxiansheng.top/img/20200531134915.png?imagelist"/>
+<img width="100%" height="400px" src="https://image.yangxiansheng.top/img/20200531134911.png?imagelist"/>
 </p>
 
 
