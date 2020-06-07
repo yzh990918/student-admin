@@ -11,9 +11,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface StudentRepository extends JpaRepository<StudentUser,Long> {
 
     StudentUser findOneBySno(Long sno);
+    StudentUser findOneById(Long id);
 
     // 登录判断
 
     Long countByUsernameAndPassword(String username,String password);
     StudentUser findOneByUsername(String username);
+
+    // sno删除
+
+    void deleteAllBySno(Long sno);
 }

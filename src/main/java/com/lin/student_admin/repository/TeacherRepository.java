@@ -10,4 +10,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeacherRepository extends JpaRepository<TeacherUser,Long> {
 
+    TeacherUser findOneByTno(Long tno);
+
+    // 登录
+
+    Long countByNameAndPassword(String name,String password);
+    TeacherUser findOneByName(String name);
+
+    // 删除
+    void deleteAllByTno(Long tno);
 }

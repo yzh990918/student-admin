@@ -8,20 +8,24 @@ package com.lin.student_admin.service;
 import com.lin.student_admin.dto.StudentRegisterDto;
 import com.lin.student_admin.exception.AllreadyExistedException;
 import com.lin.student_admin.exception.AuthorizationException;
+import com.lin.student_admin.exception.NotFoundException;
 import com.lin.student_admin.exception.PasswordException;
 import com.lin.student_admin.model.Course;
 import com.lin.student_admin.model.StudentClass;
 import com.lin.student_admin.model.StudentUser;
 import com.lin.student_admin.repository.CourseRepository;
+import com.lin.student_admin.repository.StudentClassRepository;
 import com.lin.student_admin.repository.StudentRepository;
 import com.sun.org.apache.xpath.internal.objects.XNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +36,8 @@ public class StudentService {
     private StudentRepository studentRepository;
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private StudentClassRepository studentClassRepository;
 
 
     // 学生登录
@@ -66,22 +72,66 @@ public class StudentService {
 
     }
 
+    // 删除一名学生的信息和成绩信息
 
-//    // 获取学生信息
-//    public Map<String, Object>getInfo(String token,Long sno){
-//        if("student-token".equals(token)){
-//            StudentUser result = studentRepository.findOneBySno(sno);
-//            Map<String, Object> data = new HashMap<>();
-//            List<String> role = new ArrayList<>();
-//            role.add("student");
-//            data.put("roles",role);
-//            data.put("userInfo",result);
-//            return data;
-//        }else{
-//            throw new AuthorizationException(10006);
-//        }
-//
-//    }
+    @Transactional
+    public void delete(Long sno){
+        StudentUser result = studentRepository.findOneBySno(sno);
+        if(result == null){
+            throw new NotFoundException(10002);
+        }else{
+            studentRepository.deleteAllBySno(sno);
+            studentClassRepository.deleteAllBySno(sno);
+        }
+    }
+
+
+    // 修改一名学生的基本信息需要传入整个对象 包含id
+
+    public void modifyStudentInfo(StudentUser studentUser){
+        // 查询出这名学生的密码 因为管理员才能修改学生账户密码 其他角色没有权限
+        String password = studentRepository.findOneBySno(studentUser.getSno()).getPassword();
+
+        // 默认没有传入密码时
+        if(studentUser.getPassword()==null){
+            // 传入默认密码
+            studentUser.setPassword(password);
+        }else{
+            studentUser.setPassword(studentUser.getPassword());
+        }
+        studentRepository.save(studentUser);
+    }
+
+
+    // 录入或修改学生成绩
+
+    public void addSudentScore(Long sno,Long cno,Integer score){
+        // 传入学号 课程名称 成绩
+        Course course = courseRepository.findOneByCno(cno);
+        if(course == null){
+            throw new NotFoundException(10007);
+        }else{
+            StudentUser user = studentRepository.findOneBySno(sno);
+            if(user == null){
+                throw new NotFoundException(10002);
+
+            }else{
+                // 获取cno 然后操作student-class
+                StudentClass studentClass= studentClassRepository.findBySnoAndCno(sno,cno);
+                // 如果有这门课程的成绩,则视为修改成绩
+                if(studentClass != null){
+                    studentClass.setScore(score);
+                    studentClassRepository.save(studentClass);
+                }else{
+                    // 录入成绩 构建成绩对象 保存
+                    StudentClass studentClass1 = StudentClass.builder().sno(sno).cno(cno).score(score).build();
+                    studentClassRepository.save(studentClass1);
+                }
+            }
+
+        }
+    }
+
 
 
     // 查询学生详情和成绩
@@ -100,17 +150,18 @@ public class StudentService {
         return courseRepository.findAllByCnoIn(cnosList);
     }
 
-    //分页查询出所有的学生信息
+    //分页查询出所有的学生信息 暂时无法做成绩排序
 
 public Page<StudentUser> getStudentList(Integer page,Integer size){
-        // 创建分页对象
-    Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page,size);
      return this.studentRepository.findAll(pageable);
     }
 
     // sno 查询学生成绩分布
-    public List<Integer> getScoreState(Long sno){
+
+    public Map<String, Object> getScoreState(Long sno){
         StudentUser studentUser = studentRepository.findOneBySno(sno);
+        // 成绩分布数组
         List<Integer> data = new ArrayList<>();
         int a =0;
         int b=0;
@@ -120,7 +171,7 @@ public Page<StudentUser> getStudentList(Integer page,Integer size){
         int sum =0;
        for(StudentClass Item:studentUser.getCourseList()){
            Integer score = Item.getScore();
-           sum+= score;
+           sum += score;
            if(score<=60){
                a = a+1;
            }else if(score>60 && score<=70){
@@ -133,13 +184,27 @@ public Page<StudentUser> getStudentList(Integer page,Integer size){
                e = e+1;
            }
        }
-       data.add(studentUser.getCourseList().size());
-       data.add(sum/studentUser.getCourseList().size());
        data.add(a);
        data.add(b);
        data.add(c);
        data.add(d);
        data.add(e);
-       return data;
+       // 成绩数组
+        List<Object> score = new ArrayList<>();
+        for(StudentClass item:studentUser.getCourseList()){
+            Integer s = item.getScore();
+            Map<String, Object>scoredata = new HashMap<>();
+            scoredata.put("cno",item.getCourseDetail().get(0).getCno());
+            scoredata.put("courseName",item.getCourseDetail().get(0).getName());
+            scoredata.put("score",s);
+            score.add(scoredata);
+        }
+        Map<String, Object> items = new HashMap<>();
+        items.put("distribute",data);
+        items.put("scoreData",score);
+        items.put("sum",sum);
+        items.put("average",sum/studentUser.getCourseList().size());
+        items.put("CourseCount",studentUser.getCourseList().size());
+        return  items;
     }
 }

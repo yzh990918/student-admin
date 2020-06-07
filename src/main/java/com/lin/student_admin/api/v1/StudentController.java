@@ -8,6 +8,7 @@ package com.lin.student_admin.api.v1;
 import com.lin.student_admin.dto.StudentRegisterDto;
 import com.lin.student_admin.dto.StudentUserDto;
 import com.lin.student_admin.exception.NotFoundException;
+import com.lin.student_admin.model.StudentClass;
 import com.lin.student_admin.model.StudentUser;
 import com.lin.student_admin.service.StudentService;
 import com.lin.student_admin.vo.PagingVo;
@@ -47,7 +48,7 @@ public class StudentController {
 
     @GetMapping("/getAll")
     public ResponseVo getAll(@RequestParam(name = "page",defaultValue = "0") Integer page,
-                                        @RequestParam(name = "size",defaultValue = "10") Integer size){
+                                        @RequestParam(name = "size",defaultValue = "20") Integer size){
 
         PagingVo<StudentUser> result = new PagingVo<>(studentService.getStudentList(page, size));
         return new ResponseVo(result);
@@ -78,5 +79,38 @@ public class StudentController {
         data.put("msg","注册成功");
         return data;
     }
+
+    // 删除一个学生信息
+
+    @PostMapping("/delete")
+    public Map<String, Object>delete(@RequestParam Long sno){
+        studentService.delete(sno);
+        Map<String, Object>data = new HashMap<>();
+        data.put("msg","删除成功");
+        data.put("code",200);
+        return data;
+    }
+
+    // 修改学生的信息
+
+    @PostMapping("/modify")
+    public Map<String, Object>modify(@RequestBody StudentUser studentUser){
+        studentService.modifyStudentInfo(studentUser);
+        Map<String, Object>data = new HashMap<>();
+        data.put("msg","修改成功");
+        data.put("code",200);
+        return data;
+    }
+
+    // 录入成绩或者修改学生的某科成绩
+    @PostMapping("/score/addOrModify")
+    public Map<String, Object>addOrModifyScore(@RequestBody StudentClass studentClass){
+        studentService.addSudentScore(studentClass.getSno(),studentClass.getCno(),studentClass.getScore());
+        Map<String, Object>data = new HashMap<>();
+        data.put("msg","操作成功");
+        data.put("code",200);
+        return data;
+    }
+
 
 }

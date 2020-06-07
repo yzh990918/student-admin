@@ -9,5 +9,9 @@ import com.lin.student_admin.model.AdminUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AdminRepository extends JpaRepository<AdminUser,Long> {
+    AdminUser findOneById(Long id);
+
+    Long countByUsernameAndPassword(String userName,String password);
+    AdminUser findOneByUsername(String userName);
 
 }

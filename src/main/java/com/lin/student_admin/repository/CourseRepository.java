@@ -16,4 +16,12 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
 
     List<Course> findAllByCnoIn(List<Long>cnos);
 
+    // 查询单个学科信息
+    Course findOneByName(String name);
+    Course findOneByCno(Long cno);
+
+    // 删除单个学科
+
+    void deleteOneByCno(Long cno);
+
 }

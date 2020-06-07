@@ -5,9 +5,7 @@
  */
 package com.lin.student_admin.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,6 +14,9 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class StudentClass {
     private Long sno;
     private Long cno;
