@@ -1,6 +1,6 @@
-<h2 style="width:100%;margin:0 auto;">学生综合管理系统</h2>
+<h1>学生综合管理系统</h1>
 
-<p style="text-align:center">
+<p text-align="center">
 <img width="100%" height="400px" src="https://image.yangxiansheng.top/img/20200531134911.png?imagelist"/>
 </p>
 
@@ -13,7 +13,11 @@
 - lombok
 - redis
 ## 接口示例截图
-![](https://image.yangxiansheng.top/img/20200606231710.png?imagelist)
+
+<p text-align="center">
+<img width="100%" height="400px" src="https://image.yangxiansheng.top/img/20200606231710.png?imagelist"/>
+</p>
+
 
 ## TODO
 
