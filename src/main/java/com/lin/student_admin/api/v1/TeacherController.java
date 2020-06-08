@@ -5,9 +5,7 @@
  */
 package com.lin.student_admin.api.v1;
 
-import com.lin.student_admin.dto.StudentRegisterDto;
-import com.lin.student_admin.dto.StudentUserDto;
-import com.lin.student_admin.dto.TeacherUserDto;
+import com.lin.student_admin.dto.*;
 import com.lin.student_admin.model.StudentUser;
 import com.lin.student_admin.model.TeacherUser;
 import com.lin.student_admin.service.TeacherService;
@@ -33,8 +31,8 @@ public class TeacherController {
 
     // 教师注册
     @PostMapping("/register")
-    public Map<String, Object> register(@RequestBody TeacherUser teacherUser){
-        teacherService.register(teacherUser);
+    public Map<String, Object> register(@RequestBody TeacherRegisterDto teacherRegisterDto){
+        teacherService.register(teacherRegisterDto);
         Map<String, Object> data = new HashMap<>();
         data.put("code",200);
         data.put("msg","注册成功");
@@ -55,8 +53,8 @@ public class TeacherController {
     // 修改教师的信息
 
     @PostMapping("/modify")
-    public Map<String, Object>modify(@RequestBody TeacherUser teacherUser){
-        teacherService.modifyTeacherInfo(teacherUser);
+    public Map<String, Object>modify(@RequestBody TeacherModifyDto teacherModifyDto){
+        teacherService.modifyTeacherInfo(teacherModifyDto);
         Map<String, Object>data = new HashMap<>();
         data.put("msg","修改成功");
         data.put("code",200);

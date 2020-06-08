@@ -48,6 +48,7 @@ public class AdminService {
             Map<String, Object> data = new HashMap<>();
             // 暂时不使用jwt token
             data.put("token","admin-token");
+            data.put("userInfo",user);
             return data;
         }else{
             throw new PasswordException(10004);

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,12 +24,15 @@ public class TeacherUser {
     private String name;
     @JsonIgnore
     private String password;
-    @Column(insertable = false,columnDefinition = "String default 'https://image.yangxiansheng.top/img/57ed425a-c71e-4201-9428-68760c0537c4.jpg?imagelist'")
     private String avatar;
     private Integer gender;
     private String job;
-    private Integer classNo;
+    private Long cno;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany
+    @JoinColumn(name = "cno")
+    private List<StudentClass>courses;
 }

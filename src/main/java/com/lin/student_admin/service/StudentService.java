@@ -90,7 +90,7 @@ public class StudentService {
 
     public void modifyStudentInfo(StudentUser studentUser){
         // 查询出这名学生的密码 因为管理员才能修改学生账户密码 其他角色没有权限
-        String password = studentRepository.findOneBySno(studentUser.getSno()).getPassword();
+        String password = studentRepository.findOneById(studentUser.getId()).getPassword();
 
         // 默认没有传入密码时
         if(studentUser.getPassword()==null){
