@@ -1,6 +1,8 @@
 <h1>学生综合管理系统</h1>
 
-![](https://image.yangxiansheng.top/img/20200531134915.png?imagelist)
+<p text-aligin="center">
+  <img width="100%" src="https://image.yangxiansheng.top/img/50530061-851b-4ca5-9dc5-2fead928a939.jpg?imagelist"/>
+  </p>
 
 
 
