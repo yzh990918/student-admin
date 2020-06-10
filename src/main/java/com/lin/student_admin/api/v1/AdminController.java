@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/admin")
 public class AdminController {
     @Autowired
@@ -27,9 +28,9 @@ public class AdminController {
 
     // 管理员登陆
 
-    @PostMapping ("/login")
+    @RequestMapping(method = RequestMethod.POST,value = "/login")
     public ResponseTVo Login(@RequestBody StudentUserDto userDto){
-        return new ResponseTVo("登录成功",200,adminService.adminLogin(userDto.getUsername(),userDto.getPassword()));
+        return new ResponseTVo("登录成功",200,adminService.login(userDto.getUsername(),userDto.getPassword()));
     }
 
 

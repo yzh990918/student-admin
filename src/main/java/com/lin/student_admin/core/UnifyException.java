@@ -14,6 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UnifyException {
     private int code;
-    private String message;
+    private String msg;
     private String request;
 }

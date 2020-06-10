@@ -24,6 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/student")
 @Validated
+@CrossOrigin(origins = "*")
 public class StudentController {
     @Autowired
     private StudentService studentService;

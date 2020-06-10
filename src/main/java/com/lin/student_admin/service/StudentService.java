@@ -16,6 +16,7 @@ import com.lin.student_admin.model.StudentUser;
 import com.lin.student_admin.repository.CourseRepository;
 import com.lin.student_admin.repository.StudentClassRepository;
 import com.lin.student_admin.repository.StudentRepository;
+import com.lin.student_admin.util.ArrayScore;
 import com.sun.org.apache.xpath.internal.objects.XNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,7 +54,6 @@ public class StudentService {
         }else{
             throw new PasswordException(10004);
         }
-
     }
 
     // 学生注册
@@ -161,6 +161,9 @@ public Page<StudentUser> getStudentList(Integer page,Integer size){
 
     public Map<String, Object> getScoreState(Long sno){
         StudentUser studentUser = studentRepository.findOneBySno(sno);
+        if(studentUser == null){
+            throw new NotFoundException(10002);
+        }
         // 成绩分布数组
         List<Integer> data = new ArrayList<>();
         int a =0;
@@ -169,6 +172,9 @@ public Page<StudentUser> getStudentList(Integer page,Integer size){
         int d=0;
         int e =0;
         int sum =0;
+        if(studentUser.getCourseList().size() == 0){
+            throw new NotFoundException(100011);
+        }
        for(StudentClass Item:studentUser.getCourseList()){
            Integer score = Item.getScore();
            sum += score;
@@ -194,8 +200,21 @@ public Page<StudentUser> getStudentList(Integer page,Integer size){
         for(StudentClass item:studentUser.getCourseList()){
             Integer s = item.getScore();
             Map<String, Object>scoredata = new HashMap<>();
-            scoredata.put("cno",item.getCourseDetail().get(0).getCno());
+            Long cno = item.getCourseDetail().get(0).getCno();
+            // 传入cno 计算平均分
+            List<StudentClass>courses =studentClassRepository.findAllByCno(cno);
+            if(courses.size() == 0){
+                scoredata.put("courseAvg",0);
+            }else{
+                scoredata.put("courseAvg", ArrayScore.getArrayScore(courses));
+            }
+            scoredata.put("cno",cno);
+            scoredata.put("id",item.getCourseDetail().get(0).getId());
             scoredata.put("courseName",item.getCourseDetail().get(0).getName());
+            scoredata.put("img",item.getCourseDetail().get(0).getImg());
+            scoredata.put("credit",item.getCourseDetail().get(0).getCredit());
+            scoredata.put("term",item.getCourseDetail().get(0).getTerm());
+            scoredata.put("period",item.getCourseDetail().get(0).getPeriod());
             scoredata.put("score",s);
             score.add(scoredata);
         }

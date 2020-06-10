@@ -40,9 +40,11 @@ public class AdminService {
     @Autowired
     private CourseRepository courseRepository;
 
-    // 管理员登陆
-    public Map<String, Object> adminLogin(String username, String password){
+    // 统一角色登录
+    public Map<String, Object> login(String username, String password){
         Long result = adminRepository.countByUsernameAndPassword(username, password);
+        Long result1 = studentRepository.countByUsernameAndPassword(username, password);
+        Long result2 = teacherRepository.countByNameAndPassword(username, password);
         if(result == 1){
             AdminUser user = adminRepository.findOneByUsername(username);
             Map<String, Object> data = new HashMap<>();
@@ -50,10 +52,22 @@ public class AdminService {
             data.put("token","admin-token");
             data.put("userInfo",user);
             return data;
+        }
+        else if(result1 == 1){
+            StudentUser user = studentRepository.findOneByUsername(username);
+            Map<String, Object> data = new HashMap<>();
+            data.put("token","student-token");
+            data.put("userInfo",user);
+            return data;
+        }else if(result2 == 1){
+            TeacherUser teacherUser = teacherRepository.findOneByName(username);
+            Map<String, Object> data = new HashMap<>();
+            data.put("token","teacher-token");
+            data.put("userInfo",teacherUser);
+            return data;
         }else{
             throw new PasswordException(10004);
         }
-
     }
 
     // 获取首屏数据
