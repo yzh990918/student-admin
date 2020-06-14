@@ -24,6 +24,7 @@ import java.util.List;
 @ResponseBody
 public class GlobalException {
     @Autowired
+
     private ExceptionConfiguration exceptionConfiguration;
     // 未知异常
 

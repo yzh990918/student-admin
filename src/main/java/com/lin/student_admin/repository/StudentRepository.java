@@ -6,7 +6,11 @@
 package com.lin.student_admin.repository;
 
 import com.lin.student_admin.model.StudentUser;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface StudentRepository extends JpaRepository<StudentUser,Long> {
 
@@ -21,4 +25,9 @@ public interface StudentRepository extends JpaRepository<StudentUser,Long> {
     // sno删除
 
     void deleteAllBySno(Long sno);
+
+    // 搜索
+
+    Page<StudentUser> findByNameContainingOrSubjectContainingOrCollegeContaining(String keyword1, String keyword2, String keyword3, Pageable pagable);
+
 }

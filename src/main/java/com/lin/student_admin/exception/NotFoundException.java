@@ -8,6 +8,6 @@ package com.lin.student_admin.exception;
 public class NotFoundException extends HttpException{
     public NotFoundException(int code){
         this.code = code;
-        this.HttpStatusCode = 404;
+        this.HttpStatusCode = 200;
     }
 }

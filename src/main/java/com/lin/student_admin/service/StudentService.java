@@ -85,6 +85,11 @@ public class StudentService {
         }
     }
 
+    @Transactional
+    public void deleteOne(Long sno,Long cno){
+        studentClassRepository.deleteById(studentClassRepository.findBySnoAndCno(sno, cno).getId());
+    }
+
 
     // 修改一名学生的基本信息需要传入整个对象 包含id
 
@@ -157,73 +162,90 @@ public Page<StudentUser> getStudentList(Integer page,Integer size){
      return this.studentRepository.findAll(pageable);
     }
 
+    // 关键词搜索学生列表
+
+public Page<StudentUser>searchByKeyword(Integer page,Integer size,String keyword1,String keyword2,String keyword3){
+Pageable pageable = PageRequest.of(page,size);
+return studentRepository.findByNameContainingOrSubjectContainingOrCollegeContaining(keyword1,keyword2,keyword3,pageable);
+}
+
+
+
     // sno 查询学生成绩分布
 
-    public Map<String, Object> getScoreState(Long sno){
+    public Map<String, Object> getScoreState(Long sno) {
         StudentUser studentUser = studentRepository.findOneBySno(sno);
-        if(studentUser == null){
+        if (studentUser == null) {
             throw new NotFoundException(10002);
         }
         // 成绩分布数组
         List<Integer> data = new ArrayList<>();
-        int a =0;
-        int b=0;
-        int c= 0;
-        int d=0;
-        int e =0;
-        int sum =0;
-        if(studentUser.getCourseList().size() == 0){
+        int a = 0;
+        int b = 0;
+        int c = 0;
+        int d = 0;
+        int e = 0;
+        int sum = 0;
+        if (studentUser.getCourseList().size() == 0) {
             throw new NotFoundException(100011);
         }
-       for(StudentClass Item:studentUser.getCourseList()){
-           Integer score = Item.getScore();
-           sum += score;
-           if(score<=60){
-               a = a+1;
-           }else if(score>60 && score<=70){
-               b = b+1;
-           }else if(score>70 && score<=80){
-               c = c+1;
-           }else if(score>80 && score<=90){
-               d = d+1;
-           }else if(score>90 && score<100){
-               e = e+1;
-           }
-       }
-       data.add(a);
-       data.add(b);
-       data.add(c);
-       data.add(d);
-       data.add(e);
-       // 成绩数组
+        for (StudentClass Item : studentUser.getCourseList()) {
+            Integer score = Item.getScore();
+            sum += score;
+            if (score <= 60) {
+                a = a + 1;
+            } else if (score > 60 && score <= 70) {
+                b = b + 1;
+            } else if (score > 70 && score <= 80) {
+                c = c + 1;
+            } else if (score > 80 && score <= 90) {
+                d = d + 1;
+            } else if (score > 90 && score < 100) {
+                e = e + 1;
+            }
+        }
+        data.add(a);
+        data.add(b);
+        data.add(c);
+        data.add(d);
+        data.add(e);
+        // 成绩数组
         List<Object> score = new ArrayList<>();
-        for(StudentClass item:studentUser.getCourseList()){
+        for (StudentClass item : studentUser.getCourseList()) {
             Integer s = item.getScore();
-            Map<String, Object>scoredata = new HashMap<>();
-            Long cno = item.getCourseDetail().get(0).getCno();
+            Map<String, Object> scoredata = new HashMap<>();
+            Long cno = item.getCno();
+            Course couseDetail = courseRepository.findOneByCno(cno);
             // 传入cno 计算平均分
-            List<StudentClass>courses =studentClassRepository.findAllByCno(cno);
-            if(courses.size() == 0){
-                scoredata.put("courseAvg",0);
-            }else{
+            List<StudentClass> courses = studentClassRepository.findAllByCno(cno);
+            if (courses.size() == 0) {
+                scoredata.put("courseAvg", 0);
+            } else {
                 scoredata.put("courseAvg", ArrayScore.getArrayScore(courses));
             }
-            scoredata.put("cno",cno);
-            scoredata.put("id",item.getCourseDetail().get(0).getId());
-            scoredata.put("courseName",item.getCourseDetail().get(0).getName());
-            scoredata.put("img",item.getCourseDetail().get(0).getImg());
-            scoredata.put("credit",item.getCourseDetail().get(0).getCredit());
-            scoredata.put("term",item.getCourseDetail().get(0).getTerm());
-            scoredata.put("period",item.getCourseDetail().get(0).getPeriod());
-            scoredata.put("score",s);
+            scoredata.put("cno", cno);
+            scoredata.put("scoreId", item.getId());
+            scoredata.put("courseName", couseDetail.getName());
+            scoredata.put("img", couseDetail.getImg());
+            scoredata.put("credit", couseDetail.getCredit());
+            scoredata.put("term", couseDetail.getTerm());
+            scoredata.put("period", couseDetail.getPeriod());
+            scoredata.put("score", s);
             score.add(scoredata);
         }
         Map<String, Object> items = new HashMap<>();
-        items.put("distribute",data);
-        items.put("scoreData",score);
-        items.put("sum",sum);
-        items.put("average",sum/studentUser.getCourseList().size());
-        items.put("CourseCount",studentUser.getCourseList().size());
-        return  items;
+        items.put("distribute", data);
+        items.put("scoreData", score);
+        items.put("sum", sum);
+        items.put("average", sum / studentUser.getCourseList().size());
+        items.put("CourseCount", studentUser.getCourseList().size());
+        return items;
     }
+
+    // 删除一门成绩
+@Transactional
+    public void deleteScore(Long id){
+            studentClassRepository.deleteById(id);
+    }
+
 }

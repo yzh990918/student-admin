@@ -5,6 +5,7 @@
  */
 package com.lin.student_admin.api.v1;
 
+import com.lin.student_admin.dto.StudentClassDto;
 import com.lin.student_admin.dto.StudentRegisterDto;
 import com.lin.student_admin.dto.StudentUserDto;
 import com.lin.student_admin.exception.NotFoundException;
@@ -49,7 +50,7 @@ public class StudentController {
 
     @GetMapping("/getAll")
     public ResponseVo getAll(@RequestParam(name = "page",defaultValue = "0") Integer page,
-                                        @RequestParam(name = "size",defaultValue = "20") Integer size){
+                                        @RequestParam(name = "size",defaultValue = "10") Integer size){
 
         PagingVo<StudentUser> result = new PagingVo<>(studentService.getStudentList(page, size));
         return new ResponseVo(result);
@@ -111,6 +112,26 @@ public class StudentController {
         data.put("msg","操作成功");
         data.put("code",200);
         return data;
+    }
+
+    // 搜索关键词 name subject college
+    @GetMapping("/search")
+    public ResponseVo searchBykeyWord(@RequestParam String keyword,@RequestParam(name = "page",defaultValue = "0")Integer page,
+                                      @RequestParam(name = "size",defaultValue = "10")Integer size){
+        PagingVo<StudentUser>studentUserPagingVo = new PagingVo<>(studentService.searchByKeyword(page,size,keyword,keyword,keyword));
+        return new ResponseVo(studentUserPagingVo);
+    }
+
+    // 删除一名成绩 传入sno cno
+
+
+    @PostMapping("/score/delete")
+    public Map<String, Object>deletescore(@RequestParam Long id){
+            studentService.deleteScore(id);
+            Map<String, Object>data = new HashMap<>();
+            data.put("msg","删除成功");
+            data.put("code",200);
+            return data;
     }
 
 

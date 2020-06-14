@@ -21,4 +21,6 @@ public class TeacherModifyDto {
     private Integer gender;
     private String job;
     private Long cno;
+    private String subject;
+    private String college;
 }

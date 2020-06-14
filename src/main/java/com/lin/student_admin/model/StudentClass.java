@@ -25,7 +25,7 @@ public class StudentClass {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "cno")
-    private List<Course>  courseDetail;
+//    @OneToMany()
+//    @JoinColumn(name = "cno")
+//    private List <Course>  courseDetail;
 }
