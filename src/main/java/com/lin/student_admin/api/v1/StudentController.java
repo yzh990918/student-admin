@@ -63,6 +63,12 @@ public class StudentController {
         return new ResponseVo(studentService.getScoreState(sno));
     }
 
+    // 传入学号查询所有的成绩列表
+    @GetMapping("/getScoreList")
+    public ResponseVo getScoreList(@RequestParam Long sno){
+        return new ResponseVo(studentService.getscoreList(sno));
+    }
+
 
     // 学生登录
 

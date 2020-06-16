@@ -128,6 +128,9 @@ public class StudentService {
                     studentClass.setScore(score);
                     studentClassRepository.save(studentClass);
                 }else{
+                    if(score<0 || score>100){
+                        throw new NotFoundException(100012);
+                    }
                     // 录入成绩 构建成绩对象 保存
                     StudentClass studentClass1 = StudentClass.builder().sno(sno).cno(cno).score(score).build();
                     studentClassRepository.save(studentClass1);
@@ -136,8 +139,13 @@ public class StudentService {
 
         }
     }
-
-
+    public List<StudentClass> getscoreList(Long sno){
+        StudentUser studentUser = studentRepository.findOneBySno(sno);
+        if(studentUser ==null){
+            throw new NotFoundException(10002);
+        }
+        return studentClassRepository.findAllBySno(sno);
+    }
 
     // 查询学生详情和成绩
     public StudentUser getdetail(Long sno){
@@ -186,10 +194,10 @@ return studentRepository.findByNameContainingOrSubjectContainingOrCollegeContain
         int d = 0;
         int e = 0;
         int sum = 0;
-        if (studentUser.getCourseList().size() == 0) {
+        if (this.getscoreList(sno).size() == 0) {
             throw new NotFoundException(100011);
         }
-        for (StudentClass Item : studentUser.getCourseList()) {
+        for (StudentClass Item : this.getscoreList(sno)) {
             Integer score = Item.getScore();
             sum += score;
             if (score <= 60) {
@@ -211,7 +219,7 @@ return studentRepository.findByNameContainingOrSubjectContainingOrCollegeContain
         data.add(e);
         // 成绩数组
         List<Object> score = new ArrayList<>();
-        for (StudentClass item : studentUser.getCourseList()) {
+        for (StudentClass item : this.getscoreList(sno)) {
             Integer s = item.getScore();
             Map<String, Object> scoredata = new HashMap<>();
             Long cno = item.getCno();
@@ -237,8 +245,8 @@ return studentRepository.findByNameContainingOrSubjectContainingOrCollegeContain
         items.put("distribute", data);
         items.put("scoreData", score);
         items.put("sum", sum);
-        items.put("average", sum / studentUser.getCourseList().size());
-        items.put("CourseCount", studentUser.getCourseList().size());
+        items.put("average", sum / this.getscoreList(sno).size());
+        items.put("CourseCount", this.getscoreList(sno).size());
         return items;
     }
 

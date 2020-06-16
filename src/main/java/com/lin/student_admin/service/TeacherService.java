@@ -50,7 +50,7 @@ public class TeacherService {
         if(teacherRepository.findOneByName(teacherUser.getName())==null){
             TeacherUser user =  TeacherUser.builder().name(teacherUser.getName()).avatar("https://image.yangxiansheng.top/img/57ed425a-c71e-4201-9428-68760c0537c4.jpg?imagelist")
                     .cno(teacherUser.getCno()).gender(teacherUser.getGender()).job(teacherUser.getJob())
-                    .password(teacherUser.getPassword()).tno(Instant.now().getEpochSecond()).college(teacherUser.getCollege()).subject(teacherUser.getSubject()).build();
+                    .password(teacherUser.getPassword()).tno(Instant.now().getEpochSecond()).college(teacherUser.getCollege()).build();
             teacherRepository.save(user);
         }else{
             throw new AllreadyExistedException(100010);
@@ -70,16 +70,20 @@ public class TeacherService {
         }
     }
 
+    public  String getTeacherPassword(String name){
+        return teacherRepository.findOneByName(name).getPassword();
+    }
+
 
     // 删除一名教师信息
 
     @Transactional
-    public void delete(Long tno){
-        TeacherUser user = teacherRepository.findOneByTno(tno);
+    public void deleteteacher(Long id){
+        TeacherUser user = teacherRepository.findOneById(id);
         if(user == null){
             throw new NotFoundException(10003);
         }else{
-            teacherRepository.deleteAllByTno(tno);
+            this.teacherRepository.deleteAllById(id);
         }
     }
 
@@ -87,7 +91,7 @@ public class TeacherService {
     // 修改一名教师的基本信息需要传入整个对象 包含id
 
     public void modifyTeacherInfo( TeacherModifyDto teacherModifyDto){
-        TeacherUser teacherUser = TeacherUser.builder().college(teacherModifyDto.getCollege()).subject(teacherModifyDto.getSubject()).avatar(teacherModifyDto.getAvatar())
+        TeacherUser teacherUser = TeacherUser.builder().college(teacherModifyDto.getCollege()).avatar(teacherModifyDto.getAvatar())
                 .cno(teacherModifyDto.getCno()).gender(teacherModifyDto.getGender()).job(teacherModifyDto.getJob())
                 .name(teacherModifyDto.getName()).password(teacherModifyDto.getPassword()).tno(teacherModifyDto.getTno()).id(teacherModifyDto.getId())
                 .build();

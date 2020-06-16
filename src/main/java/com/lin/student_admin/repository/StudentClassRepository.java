@@ -20,8 +20,11 @@ public interface StudentClassRepository extends JpaRepository<StudentClass,Long>
 
     StudentClass findBySnoAndCno(Long sno,Long cno);
 
+
+
     // 计算每门学科平均成绩
     List<StudentClass> findAllByCno(Long cno);
+    List<StudentClass> findAllBySno(Long sno);
 
     // 删除一门学科
     void deleteAllById(Long id);

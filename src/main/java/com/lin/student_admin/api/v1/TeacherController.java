@@ -8,6 +8,7 @@ package com.lin.student_admin.api.v1;
 import com.lin.student_admin.dto.*;
 import com.lin.student_admin.model.StudentUser;
 import com.lin.student_admin.model.TeacherUser;
+import com.lin.student_admin.repository.TeacherRepository;
 import com.lin.student_admin.service.TeacherService;
 import com.lin.student_admin.vo.ResponseTVo;
 import com.lin.student_admin.vo.ResponseVo;
@@ -23,7 +24,17 @@ import java.util.Map;
 public class TeacherController {
     @Autowired
     private TeacherService teacherService;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
+//    @PostMapping("/deleteIt")
+//    public Map<String, Object>deleteit(@RequestParam Long id){
+//        this.teacherRepository.deleteById(id);
+//        Map<String, Object>data = new HashMap<>();
+//        data.put("msg","删除成功");
+//        data.put("code",200);
+//        return data;
+//    }
     // 教师登录
     @PostMapping("/login")
     public ResponseTVo Login(@RequestBody TeacherUserDto teacherUserDto){
@@ -43,8 +54,8 @@ public class TeacherController {
     // 删除一个教师信息
 
     @PostMapping("/delete")
-    public Map<String, Object>delete(@RequestParam Long tno){
-        teacherService.delete(tno);
+    public Map<String, Object>delete(@RequestParam Long id){
+        teacherService.deleteteacher(id);
         Map<String, Object>data = new HashMap<>();
         data.put("msg","删除成功");
         data.put("code",200);
@@ -69,4 +80,9 @@ public class TeacherController {
         return new ResponseVo(teacherService.getInfo(tno));
     }
 
+    // 获取教师密码
+    @PostMapping("/getPassword")
+    public ResponseVo getPassword(@RequestParam String name){
+        return new ResponseVo(teacherService.getTeacherPassword(name));
+    }
 }

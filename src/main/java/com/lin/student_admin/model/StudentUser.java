@@ -35,10 +35,11 @@ public class StudentUser {
     // 添加默认值
 
     private String avatar;
-
     // 连表查询
+//    @JoinTable(name = "PersonAddress",
+//            joinColumns = @JoinColumn(name = "personId"),
 
-    @OneToMany
-    @JoinColumn(name = "sno")
-    private List<StudentClass>courseList;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name="sno")
+//    private List<StudentClass>courseList;
 }

@@ -27,5 +27,4 @@ public class TeacherRegisterDto {
     private String job;
     private Long cno;
     private String college;
-    private String subject;
 }

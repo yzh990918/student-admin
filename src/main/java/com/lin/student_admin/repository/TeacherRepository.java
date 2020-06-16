@@ -19,4 +19,6 @@ public interface TeacherRepository extends JpaRepository<TeacherUser,Long> {
 
     // 删除
     void deleteAllByTno(Long tno);
+    void deleteAllById(Long id);
+    TeacherUser findOneById(Long id);
 }

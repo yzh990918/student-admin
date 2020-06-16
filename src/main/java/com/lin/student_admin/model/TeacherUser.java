@@ -28,13 +28,9 @@ public class TeacherUser {
     private Integer gender;
     private String job;
     private Long cno;
-    private String subject;
     private String college;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "cno")
-    private List<Course> courses;
 }
